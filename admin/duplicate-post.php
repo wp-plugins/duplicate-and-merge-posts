@@ -105,8 +105,10 @@ class DuplicatePost{
 
 	  	/* Exclude post types from settings */
 	  	if(isset($settings['exclude_post_types'])) {
-	  		if(in_array($postType, $settings['exclude_post_types'])){
-	  			$allowed = false;
+	  		if(is_array($settings['exclude_post_types'])){
+		  		if(in_array($postType, $settings['exclude_post_types'])){
+		  			$allowed = false;
+		  		}
 	  		}
 	  	}
 
@@ -389,6 +391,10 @@ class DuplicatePost{
 		if(isset($_POST['revert_back_to_cloned'])) {
 			$o_post_id = get_post_meta($post_id, '_dp_original_backup', true);
 			update_post_meta($post_id, "_dp_original", $o_post_id);
+			//echo 'yes' . $original_post_id;
+		}
+		if(isset($_POST['unlink_post_forever'])) {
+			delete_post_meta($post_id, '_dp_original_backup');
 			//echo 'yes' . $original_post_id;
 		}
 		//exit;
@@ -943,16 +949,22 @@ class DuplicatePost{
 						<?php _e('Duplicate and Edit', 'dem'); ?>
 					</a>
 					<?php if($backup){ ?>
-						<input name="revert_back_to_cloned" type="submit" class="button revert_back_to_cloned button-primary button-large" id="revert_back_to_cloned" value="Ooops. Undo Post Unlink">
+						<input name="revert_back_to_cloned" type="submit" class="button revert_back_to_cloned button-primary button-large" id="revert_back_to_cloned" value="Ooops. Re-link to Original Post">
+						<input name="unlink_post_forever" type="submit" class="button button-primary button-large" id="unlink_post_permanently" title="This will unlink the post from the original. There is no undo after clicking this button" value="Unlink from Original Post Forever">
 						<style type="text/css">
-						#revert_back_to_cloned {
-							background: rgb(214, 8, 8);
-							border:rgb(214, 8, 8);
+						#revert_back_to_cloned, #unlink_post_permanently {
+
+							background: #00529B;
+							border:#00529B;
 							width: 100%;
 							margin-bottom: 10px;
 							color: white;
 							box-shadow: none;
 							-webkit-box-shadow: none;
+						}
+						#unlink_post_permanently {
+							background: rgb(214, 8, 8);
+							border:rgb(214, 8, 8);
 						}
 						</style>
 					<?php } ?>
